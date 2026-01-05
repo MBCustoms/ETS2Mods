@@ -2,7 +2,8 @@
 
 A modern, secure, and feature-rich mod sharing platform for Euro Truck Simulator 2 (ETS2), built with **Laravel 12**.
 
-![Dashboard Preview](./public/images/dashboard-preview.png)
+<img width="1536" height="1024" alt="ETS2Mods TurkishMods Metehan BİLAL" src="https://github.com/user-attachments/assets/382b8e49-d5fe-4a6e-a5e1-6ea545dfa62f" />
+
 
 ## 🌟 Features
 
