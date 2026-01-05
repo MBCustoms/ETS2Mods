@@ -19,8 +19,16 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\InstallerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Illuminate\Auth\Access\AuthorizationException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized action.'], 403);
+            }
+            
+            return redirect()->route('home')
+                ->with('error', 'You do not have permission to perform this action.');
+        });
     })->create();

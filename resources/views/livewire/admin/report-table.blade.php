@@ -4,7 +4,7 @@
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Reports</h2>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
-             <select wire:model.live="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+             <select wire:model.live="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md border">
                 <option value="pending">Pending</option>
                 <option value="reviewed">Reviewed</option>
                 <option value="resolved">Resolved</option>
@@ -33,7 +33,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
                                             @if($report->reportable_type === 'App\Models\Mod')
-                                                Mod: <a href="{{ route('mods.show', $report->reportable) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">{{ $report->reportable->title }}</a>
+                                                Mod: <a href="{{ route('mods.show', $report->reportable) }}" target="_blank" class="text-orange-600 hover:text-orange-900">{{ $report->reportable->title }}</a>
                                             @else
                                                 {{ $report->reportable_type }} #{{ $report->reportable_id }}
                                             @endif
@@ -56,7 +56,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         @if($report->status === 'pending')
-                                            <button wire:click="markAsReviewed({{ $report->id }})" class="text-indigo-600 hover:text-indigo-900 mr-2">Review</button>
+                                            <button wire:click="markAsReviewed({{ $report->id }})" class="text-orange-600 hover:text-orange-900 mr-2">Review</button>
                                         @endif
                                         @if($report->status !== 'resolved')
                                             <button wire:click="markAsResolved({{ $report->id }})" class="text-green-600 hover:text-green-900">Resolve</button>

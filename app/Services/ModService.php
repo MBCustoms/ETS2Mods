@@ -18,6 +18,7 @@ class ModService
             'title' => $data['title'],
             'description' => $data['description'],
             'credits' => $data['credits'] ?? null,
+            'youtube_videos' => $data['youtube_videos'] ?? null,
             'status' => 'pending',
             // Deprecated fields are handled via versions now
         ]);

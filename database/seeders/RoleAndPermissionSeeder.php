@@ -38,6 +38,7 @@ class RoleAndPermissionSeeder extends Seeder
             'resolve reports',
             'view settings',
             'edit settings',
+            'moderate comments',
         ];
 
         foreach ($permissions as $permission) {
@@ -60,6 +61,7 @@ class RoleAndPermissionSeeder extends Seeder
             'view users',
             'view reports',
             'resolve reports',
+            'moderate comments',
         ]);
 
         $user = Role::create(['name' => 'user']);

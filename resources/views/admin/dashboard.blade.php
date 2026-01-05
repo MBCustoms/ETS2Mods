@@ -55,7 +55,7 @@
         </div>
 
         <!-- Users Card -->
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg border-l-4 border-indigo-500">
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg border-l-4 border-orange-500">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -68,7 +68,7 @@
                             <dt class="text-xs font-semibold uppercase tracking-wider text-gray-400">Users</dt>
                             <dd class="flex items-baseline">
                                 <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['total_users']) }}</div>
-                                <div class="ml-2 flex items-baseline text-xs font-semibold text-indigo-600">
+                                <div class="ml-2 flex items-baseline text-xs font-semibold text-orange-600">
                                     {{ $stats['verified_users'] }} Verified
                                 </div>
                             </dd>
@@ -98,6 +98,11 @@
                             <dd class="mt-1 text-sm text-red-600 font-medium">
                                 {{ $stats['pending_reports'] }} Open Reports
                             </dd>
+                            @if(isset($pendingCommentsCount) && $pendingCommentsCount > 0)
+                                <dd class="mt-1 text-sm text-yellow-600 font-medium">
+                                    {{ $pendingCommentsCount }} Pending Comments
+                                </dd>
+                            @endif
                         </dl>
                     </div>
                 </div>
@@ -151,7 +156,7 @@
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0">
                                          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500">
-                                            <span class="text-xs font-medium leading-none text-white">{{ substr($user->name, 0, 1) }}</span>
+                                            <img src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=EA580C&color=fff' }}" alt="{{ $user->name }}" class="h-8 w-8 rounded-full border border-orange-600 border-2">
                                         </span>
                                     </div>
                                     <div class="ml-4">
@@ -173,7 +178,51 @@
                 </ul>
                 <div class="bg-gray-50 px-4 py-4 sm:px-6">
                     <div class="text-sm">
-                        <a href="{{ route('admin.users.index') }}" class="font-medium text-indigo-600 hover:text-indigo-500">View all users <span aria-hidden="true">&rarr;</span></a>
+                        <a href="{{ route('admin.users.index') }}" class="font-medium text-orange-600 hover:text-orange-500">View all users <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Messages -->
+             <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Latest Messages</h3>
+                    @if(isset($messageCount) && $messageCount > 0)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            {{ $messageCount }} Unread
+                        </span>
+                    @endif
+                </div>
+                <ul role="list" class="divide-y divide-gray-200">
+                    @forelse($latestMessages ?? [] as $msg)
+                        <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                            <div class="flex items-center justify-between">
+                                <div class="truncate flex-1 mr-4">
+                                    <div class="flex text-sm">
+                                        <p class="font-medium text-indigo-600 truncate">{{ $msg->name }}</p>
+                                        <p class="ml-1 flex-shrink-0 font-normal text-gray-500">sent a message</p>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-900 truncate font-bold">{{ $msg->subject }}</p>
+                                    <p class="mt-1 text-xs text-gray-500 truncate">{{ Str::limit($msg->message, 60) }}</p>
+                                </div>
+                                <div class="ml-2 flex-shrink-0 flex flex-col items-end">
+                                    <p class="text-xs text-gray-500 mb-1">{{ $msg->created_at->diffForHumans() }}</p>
+                                    @if(!$msg->is_read)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">New</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mt-2 text-right">
+                                <a href="{{ route('admin.contacts.show', $msg) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">View</a>
+                            </div>
+                        </li>
+                    @empty
+                        <li class="px-4 py-4 text-sm text-gray-500 text-center">No messages.</li>
+                    @endforelse
+                </ul>
+                <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                    <div class="text-sm">
+                        <a href="{{ route('admin.contacts.index') }}" class="font-medium text-orange-600 hover:text-orange-500">View all messages <span aria-hidden="true">&rarr;</span></a>
                     </div>
                 </div>
             </div>
@@ -211,6 +260,112 @@
                 </div>
             @endif
 
+            <!-- Pending Mods -->
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Pending Mods</h3>
+                    @if($stats['pending_mods'] > 0)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            {{ $stats['pending_mods'] }} Awaiting
+                        </span>
+                    @endif
+                </div>
+                <ul role="list" class="divide-y divide-gray-200">
+                    @forelse($pendingMods ?? [] as $mod)
+                        <li class="px-4 py-3 hover:bg-gray-50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0 mr-4">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded overflow-hidden bg-gray-200">
+                                            <img src="{{ $mod->first_image_url ?: 'https://placehold.co/100x100?text=Mod' }}" 
+                                                 alt="{{ $mod->title }}" 
+                                                 class="h-full w-full object-cover"
+                                                 loading="lazy">
+                                        </div>
+                                        <div class="ml-3 flex-1">
+                                            <p class="text-sm font-medium text-gray-900 truncate">{{ $mod->title }}</p>
+                                            <p class="text-xs text-gray-500">
+                                                by {{ $mod->user->name }} • {{ $mod->created_at->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <a href="{{ route('admin.mods.edit', $mod) }}" 
+                                       class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                                        Review
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    @empty
+                        <li class="px-4 py-4 text-sm text-gray-500 text-center">No pending mods.</li>
+                    @endforelse
+                </ul>
+                @if($stats['pending_mods'] > 10)
+                    <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                        <div class="text-sm">
+                            <a href="{{ route('admin.mods.index', ['status' => 'pending']) }}" class="font-medium text-orange-600 hover:text-orange-500">
+                                View all pending mods <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Pending Comments -->
+            @if(isset($pendingCommentsCount) && $pendingCommentsCount > 0)
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Pending Comments</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            {{ $pendingCommentsCount }} Awaiting
+                        </span>
+                    </div>
+                    <ul role="list" class="divide-y divide-gray-200">
+                        @forelse($latestPendingComments ?? [] as $comment)
+                            <li class="px-4 py-3 hover:bg-gray-50">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1 min-w-0 mr-4">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            <a href="{{ route('mods.show', $comment->mod_id) }}" target="_blank" class="text-orange-600 hover:text-orange-800">
+                                                {{ $comment->mod->title }}
+                                            </a>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            @if($comment->isGuest())
+                                                by {{ $comment->guest_name }} (Guest)
+                                            @else
+                                                by {{ $comment->user->name ?? 'Unknown' }}
+                                            @endif
+                                            • {{ $comment->created_at->diffForHumans() }}
+                                        </p>
+                                        <p class="text-xs text-gray-600 mt-1 truncate">{{ Str::limit($comment->content, 60) }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('admin.comments.index') }}" 
+                                           class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-orange-600 hover:bg-orange-700">
+                                            Review
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        @empty
+                            <li class="px-4 py-4 text-sm text-gray-500 text-center">No pending comments.</li>
+                        @endforelse
+                    </ul>
+                    @if($pendingCommentsCount > 5)
+                        <div class="bg-gray-50 px-4 py-4 sm:px-6">
+                            <div class="text-sm">
+                                <a href="{{ route('admin.comments.index') }}" class="font-medium text-orange-600 hover:text-orange-500">
+                                    View all pending comments <span aria-hidden="true">&rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <!-- Top Modders -->
             <div class="bg-white shadow rounded-lg overflow-hidden">
                 <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
@@ -221,7 +376,7 @@
                         <li class="px-4 py-3 hover:bg-gray-50">
                             <div class="flex items-center space-x-3">
                                 <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-primary-orange-light text-white text-xs font-bold">
-                                    {{ $loop->iteration }}
+                                    <img src="{{ $modder->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($modder->name) . '&background=EA580C&color=fff' }}" alt="{{ $modder->name }}" class="h-8 w-8 rounded-full border border-orange-600 border-2">
                                 </span>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-900 truncate">{{ $modder->name }}</p>

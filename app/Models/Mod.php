@@ -17,10 +17,17 @@ class Mod extends Model implements HasMedia
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'status', 'is_featured'])
+            ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
+
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'published_at' => 'datetime',
+        'youtube_videos' => 'array',
+        'download_links' => 'array', // Pre-emptive add for next task
+    ];
 
     protected $fillable = [
         'user_id',
@@ -29,19 +36,35 @@ class Mod extends Model implements HasMedia
         'slug',
         'description',
         'credits',
-        'game_version',
-        'file_size',
-        'download_url',
         'status',
-        'rejection_reason',
         'is_featured',
+        'rejection_reason',
+        'views_count',
+        'downloads_count',
         'published_at',
+        'download_url', // Legacy/Main
+        'youtube_videos',
+        'reviews_avg',
+        'reviews_count',
+        'download_links', // New
     ];
 
-    protected $casts = [
-        'is_featured' => 'boolean',
-        'published_at' => 'datetime',
-    ];
+    public function getYoutubeEmbedUrl($url)
+    {
+        $shortUrlRegex = '/youtu.be\/([a-zA-Z0-9_-]+)\??/i';
+        $longUrlRegex = '/youtube.com\/((?:embed)|(?:watch))((?:\?v\=)|(?:\/))([a-zA-Z0-9_-]+)/i';
+
+        if (preg_match($longUrlRegex, $url, $matches)) {
+            $youtube_id = $matches[count($matches) - 1];
+        }
+
+        if (preg_match($shortUrlRegex, $url, $matches)) {
+            $youtube_id = $matches[count($matches) - 1];
+        }
+        
+        return isset($youtube_id) ? 'https://www.youtube.com/embed/' . $youtube_id : $url;
+    }
+
 
     /**
      * Boot the model.
@@ -248,9 +271,21 @@ class Mod extends Model implements HasMedia
     }
 
     /**
-     * Relationship: Mod has many comments
+     * Relationship: Mod has many comments (approved only, top-level)
      */
     public function comments()
+    {
+        return $this->hasMany(ModComment::class)
+            ->whereNull('parent_id')
+            ->where('is_approved', true)
+            ->orderBy('is_pinned', 'desc')
+            ->latest();
+    }
+
+    /**
+     * Relationship: Mod has all comments (including unapproved, for admin)
+     */
+    public function allComments()
     {
         return $this->hasMany(ModComment::class)->whereNull('parent_id')->orderBy('is_pinned', 'desc')->latest();
     }
@@ -288,5 +323,26 @@ class Mod extends Model implements HasMedia
         // In boolean mode, we can use +,-,* operators.
         // For simplicity, we just look for exact match or words.
         return $query->whereRaw("MATCH(title, description) AGAINST(? IN BOOLEAN MODE)", [$term]);
+    }
+    /**
+     * Recalculate mod's rating stats
+     */
+    public function recalculateRating()
+    {
+        $stats = $this->comments()
+            ->where('is_approved', true)
+            ->whereNotNull('rating')
+            ->selectRaw('avg(rating) as average, count(*) as count')
+            ->first();
+
+        $this->update([
+            'reviews_avg' => round($stats->average ?? 0, 2),
+            'reviews_count' => $stats->count ?? 0,
+        ]);
+
+        // Also update the user's rating
+        if ($this->user) {
+            $this->user->recalculateRating();
+        }
     }
 }

@@ -17,10 +17,19 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $rules = [
             'email' => ['required', 'email'],
             'password' => ['required'],
-        ]);
+        ];
+
+        if (setting('recaptcha.enabled')) {
+            $rules['g-recaptcha-response'] = 'required|captcha';
+        }
+
+        $credentials = $request->validate($rules);
+
+        // Remove captcha from credentials before attempt
+        unset($credentials['g-recaptcha-response']);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -48,11 +57,17 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ];
+
+        if (setting('recaptcha.enabled')) {
+            $rules['g-recaptcha-response'] = 'required|captcha';
+        }
+
+        $request->validate($rules);
 
         $user = User::create([
             'name' => $request->name,

@@ -2,13 +2,13 @@
     <div class="mb-6 flex justify-between items-center">
         <h2 class="text-2xl font-bold text-gray-800">Report Queue</h2>
         <div class="flex space-x-4">
-            <select wire:model.live="statusFilter" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <select wire:model.live="statusFilter" class="rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                 <option value="pending">Pending</option>
                 <option value="reviewed">Reviewed</option>
                 <option value="resolved">Resolved</option>
                 <option value="">All Statuses</option>
             </select>
-            <select wire:model.live="severityFilter" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <select wire:model.live="severityFilter" class="rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500">
                 <option value="">All Severities</option>
                 <option value="critical">Critical</option>
                 <option value="high">High</option>
@@ -39,7 +39,7 @@
                             <h3 class="text-lg font-medium text-gray-900">
                                 <span class="text-gray-500 text-sm uppercase tracking-wide mr-2">{{ class_basename($report->reportable_type) }}</span>
                                 @if($report->reportable)
-                                    <a href="{{ route('mods.show', $report->reportable_id) }}" target="_blank" class="hover:underline text-indigo-600">
+                                    <a href="{{ route('mods.show', $report->reportable_id) }}" target="_blank" class="hover:underline text-orange-600">
                                         {{ $report->reportable->title ?? 'Item #' . $report->reportable_id }}
                                     </a>
                                 @else

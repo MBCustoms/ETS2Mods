@@ -101,5 +101,46 @@ class ImageUploadService
     {
         return asset($path);
     }
+
+    /**
+     * Upload logo or favicon to public/uploads/logo directory
+     * 
+     * @param UploadedFile $file
+     * @return string Relative path from public directory
+     */
+    public function uploadLogo(UploadedFile $file): string
+    {
+        $uniqueId = uniqid();
+        $extension = $file->getClientOriginalExtension();
+        
+        // Generate filename: unique_id.extension
+        $filename = "{$uniqueId}.{$extension}";
+        
+        // Path: uploads/logo/filename
+        $path = "uploads/logo/{$filename}";
+        
+        // Ensure directory exists
+        $directory = public_path('uploads/logo');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        
+        // Store file
+        $file->move($directory, $filename);
+        
+        return $path;
+    }
+
+    /**
+     * Upload favicon to public/uploads/logo directory
+     * 
+     * @param UploadedFile $file
+     * @return string Relative path from public directory
+     */
+    public function uploadFavicon(UploadedFile $file): string
+    {
+        // Re-use logo upload logic as user requested both in same folder with same format
+        return $this->uploadLogo($file);
+    }
 }
 

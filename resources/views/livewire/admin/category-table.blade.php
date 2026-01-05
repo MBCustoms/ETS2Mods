@@ -91,7 +91,7 @@
                                         </button>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button wire:click="edit({{ $category->id }})" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                                        <button wire:click="edit({{ $category->id }})" class="text-orange-600 hover:text-orange-900 mr-4">Edit</button>
                                         <button wire:click="delete({{ $category->id }})" class="text-red-600 hover:text-red-900" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()">Delete</button>
                                     </td>
                                 </tr>

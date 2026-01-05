@@ -17,12 +17,12 @@
                                     </label>
                                     <div class="mt-1">
                                         @if($setting->type === 'boolean')
-                                            <select wire:model="settings.{{ $group }}.{{ $setting->key }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border p-2">
+                                            <select wire:model="settings.{{ $group }}.{{ $setting->key }}" class="shadow-sm focus:ring-orange-500 focus:border-orange-500 block w-full sm:text-sm border-gray-300 rounded-md border p-2">
                                                 <option value="1">True</option>
                                                 <option value="0">False</option>
                                             </select>
                                         @else
-                                            <input type="text" wire:model="settings.{{ $group }}.{{ $setting->key }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border p-2">
+                                            <input type="text" wire:model="settings.{{ $group }}.{{ $setting->key }}" class="shadow-sm focus:ring-orange-500 focus:border-orange-500 block w-full sm:text-sm border-gray-300 rounded-md border p-2">
                                         @endif
                                     </div>
                                 </div>
@@ -32,7 +32,7 @@
                 @endforeach
                 
                 <div class="flex justify-end pt-5">
-                    <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                         Save Settings
                     </button>
                 </div>

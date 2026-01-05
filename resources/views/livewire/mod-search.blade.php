@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 
-                <x-ad-slot name="sidebar" />
+                <x-ad-slot slotName="search_sidebar" />
             </div>
 
             <!-- Mod Grid -->
@@ -80,7 +80,7 @@
 
                 @if($mods->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach($mods as $mod)
+                        @foreach($mods as $index => $mod)
                             <a href="{{ route('mods.show', $mod) }}" class="bg-white rounded-lg shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col h-full border border-gray-100 group">
                                 <div class="relative aspect-w-16 aspect-h-9 bg-gray-200 overflow-hidden">
                                      <img src="{{ $mod->first_image_url ?: 'https://placehold.co/600x400?text=No+Image' }}" alt="{{ $mod->title }}" class="object-cover w-full h-full transform group-hover:scale-105 transition duration-500">
@@ -117,7 +117,7 @@
                                                     @else
                                                         <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-200 text-xs font-medium text-gray-700 mr-2">{{ substr($mod->user->name,0,1) }}</span>
                                                     @endif
-                                                    <span class="text-xs text-gray-700">{{ $mod->user->name }}</span>
+                                                    <a href="{{ route('users.show', $mod->user) }}" class="text-xs text-gray-700 hover:text-orange-600" onclick="event.stopPropagation()">{{ $mod->user->name }}</a>
                                                 </div>
                                                 <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -128,6 +128,12 @@
                                     </div>
                                 </div>
                             </a>
+                            
+                            @if(($index + 1) % 6 == 0 && $index < $mods->count() - 1)
+                                <div class="col-span-full my-4">
+                                    <x-ad-slot slotName="search_inline" />
+                                </div>
+                            @endif
                         @endforeach
                     </div>
 

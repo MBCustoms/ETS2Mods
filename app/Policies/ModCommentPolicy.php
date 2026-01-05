@@ -13,8 +13,8 @@ class ModCommentPolicy
      */
     public function delete(User $user, ModComment $modComment): bool
     {
-        // User owns the comment
-        if ($user->id === $modComment->user_id) {
+        // User owns the comment (only for registered users)
+        if ($modComment->user_id && $user->id === $modComment->user_id) {
             return true;
         }
 

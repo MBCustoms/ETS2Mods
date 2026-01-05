@@ -31,9 +31,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500">
-                                        <span class="font-medium leading-none text-white">{{ substr($user->name, 0, 1) }}</span>
-                                    </span>
+                                    <img class="h-10 w-10 rounded-full object-cover" src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=6366f1&color=fff' }}" alt="{{ $user->name }}">
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900">
@@ -70,8 +68,9 @@
                             {{ $user->created_at->format('M d, Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                             <a href="{{ route('users.show', $user) }}" class="text-indigo-600 hover:text-indigo-900" target="_blank">View</a>
-                            
+                             <a href="{{ route('users.show', $user) }}" class="text-orange-600 hover:text-orange-900" target="_blank">View</a>
+                             <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                             
                             <form action="{{ route('admin.users.verify', $user) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="text-blue-600 hover:text-blue-900">

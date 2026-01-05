@@ -4,9 +4,9 @@
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Users List</h2>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search users..." class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border mr-2">
+            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search users..." class="shadow-sm focus:ring-orange-500 focus:border-orange-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border mr-2">
             
-             <select wire:model.live="role" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+             <select wire:model.live="role" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md border">
                 <option value="">All Roles</option>
                 <option value="admin">Admin</option>
                 <option value="moderator">Moderator</option>

@@ -85,4 +85,42 @@ class AnalyticsService
     {
         return User::orderByDesc('created_at')->take($limit)->get();
     }
+
+    public function getTopDownloadedMods(int $limit = 5)
+    {
+        return Cache::remember('admin_top_downloads', 3600, function () use ($limit) {
+            return DownloadLog::select('mod_id', \DB::raw('count(*) as total'))
+                ->where('created_at', '>=', now()->subDays(7))
+                ->groupBy('mod_id')
+                ->orderByDesc('total')
+                ->with('mod')
+                ->take($limit)
+                ->get();
+        });
+    }
+
+    public function getUserRegistrationStats(int $days = 30)
+    {
+        return Cache::remember('admin_user_stats', 3600, function () use ($days) {
+            $stats = User::selectRaw('DATE(created_at) as date, count(*) as count')
+                ->where('created_at', '>=', now()->subDays($days))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+            
+            $labels = [];
+            $data = [];
+            
+            // Fill missing days
+            $period = \Carbon\CarbonPeriod::create(now()->subDays($days), now());
+            foreach ($period as $date) {
+                $formattedDate = $date->format('Y-m-d');
+                $labels[] = $date->format('M d');
+                $record = $stats->firstWhere('date', $formattedDate);
+                $data[] = $record ? $record->count : 0;
+            }
+
+            return ['labels' => $labels, 'data' => $data];
+        });
+    }
 }

@@ -17,7 +17,7 @@
         @if($hasRated && !$showForm)
             <div class="text-sm text-green-600 font-medium">
                 You rated this mod {{ $rating }} stars
-                <button wire:click="$set('showForm', true)" class="ml-2 text-indigo-600 hover:text-indigo-800 underline">Edit</button>
+                <button wire:click="$set('showForm', true)" class="ml-2 text-orange-600 hover:text-orange-800 underline">Edit</button>
             </div>
         @endif
     </div>
@@ -30,7 +30,7 @@
 
     @if(!auth()->check())
         <div class="text-sm text-gray-500 mb-4">
-            <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">Log in</a> to rate this mod.
+            <a href="{{ route('login') }}" class="text-orange-600 hover:underline">Log in</a> to rate this mod.
         </div>
     @elseif(!$hasRated || $showForm)
         <div class="border-t border-gray-100 pt-4">
@@ -49,16 +49,16 @@
                 <form wire:submit.prevent="submit">
                     <div class="mb-3">
                         <label for="review_title" class="sr-only">Title</label>
-                        <input wire:model="title" type="text" id="review_title" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2" placeholder="Review Title (Optional)">
+                        <input wire:model="title" type="text" id="review_title" class="shadow-sm focus:ring-orange-500 focus:border-orange-500 block w-full sm:text-sm border-gray-300 rounded-md p-2" placeholder="Review Title (Optional)">
                         @error('title') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="mb-3">
                          <label for="review_body" class="sr-only">Review</label>
-                        <textarea wire:model="review" id="review_body" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2" placeholder="Write your review here..."></textarea>
+                        <textarea wire:model="review" id="review_body" rows="3" class="shadow-sm focus:ring-orange-500 focus:border-orange-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2" placeholder="Write your review here..."></textarea>
                          @error('review') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
                             Submit Review
                         </button>
                     </div>

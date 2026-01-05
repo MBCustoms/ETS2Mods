@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, LogsActivity;
@@ -18,7 +18,7 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'email'])
+            ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
@@ -36,8 +36,11 @@ class User extends Authenticatable
         'bio',
         'social_links',
         'is_verified',
+        'is_banned',
         'shadow_banned_at',
         'warning_count',
+        'reviews_avg',
+        'reviews_count',
     ];
 
     /**
@@ -153,5 +156,23 @@ class User extends Authenticatable
             return asset($this->avatar);
         }
         return null;
+    }
+    /**
+     * Recalculate user's rating stats based on their mods' reviews
+     */
+    public function recalculateRating()
+    {
+        // Get all approved comments with ratings on mods owned by this user
+        $stats = \App\Models\ModComment::query()
+            ->whereIn('mod_id', $this->mods()->select('id'))
+            ->where('is_approved', true)
+            ->whereNotNull('rating')
+            ->selectRaw('avg(rating) as average, count(*) as count')
+            ->first();
+
+        $this->update([
+            'reviews_avg' => round($stats->average ?? 0, 2),
+            'reviews_count' => $stats->count ?? 0,
+        ]);
     }
 }
