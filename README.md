@@ -73,12 +73,18 @@ A modern, secure, and feature-rich mod sharing platform for Euro Truck Simulator
     npm run build
     ```
 
-3.  **Launch the Application**
+3.  **Environment Setup**
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+4.  **Launch the Application**
     ```bash
     php artisan serve
     ```
 
-4.  **Run the Installer**
+5.  **Run the Installer**
     - Visit `http://127.0.0.1:8000` in your browser.
     - You will be automatically redirected to the **Installation Wizard**.
     - Follow the on-screen instructions to check requirements, set up your database, and create your admin account.
